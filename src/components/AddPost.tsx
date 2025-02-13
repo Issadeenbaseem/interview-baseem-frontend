@@ -11,9 +11,15 @@ interface AddPostProps {
   onPostAdded: (post: Post) => void;
   editingPost?: Post | null;
   onUpdatePost?: (post: Post) => void;
+  onCancel?: () => void; // New prop for closing the form
 }
 
-const AddPost: React.FC<AddPostProps> = ({ onPostAdded, editingPost, onUpdatePost }) => {
+const AddPost: React.FC<AddPostProps> = ({
+  onPostAdded,
+  editingPost,
+  onUpdatePost,
+  onCancel,
+}) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [errors, setErrors] = useState<{ title?: string; body?: string }>({});
@@ -55,6 +61,18 @@ const AddPost: React.FC<AddPostProps> = ({ onPostAdded, editingPost, onUpdatePos
     setTitle("");
     setBody("");
     setErrors({});
+  };
+
+  const handleClear = () => {
+    setTitle("");
+    setBody("");
+    setErrors({});
+  };
+
+  const handleClose = () => {
+    if (onCancel) {
+      onCancel(); // Call the onCancel function to close the form
+    }
   };
 
   return (
@@ -108,12 +126,28 @@ const AddPost: React.FC<AddPostProps> = ({ onPostAdded, editingPost, onUpdatePos
             </p>
           )}
         </div>
-        <button
-          type="submit"
-          className="w-full py-2 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-400 transition"
-        >
-          {editingPost ? "Update Post" : "Add Post"}
-        </button>
+        <div className="flex space-x-4">
+          <button
+            type="submit"
+            className="w-full py-2 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-400 transition"
+          >
+            {editingPost ? "Update Post" : "Add Post"}
+          </button>
+          <button
+            type="button"
+            onClick={handleClear}
+            className="w-full py-2 bg-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-400 transition"
+          >
+            Clear
+          </button>
+          <button
+            type="button"
+            onClick={handleClose}
+            className="w-full py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400 transition"
+          >
+            Close
+          </button>
+        </div>
       </form>
     </div>
   );
