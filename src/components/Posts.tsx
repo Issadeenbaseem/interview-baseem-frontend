@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchPosts, fetchCommentsByPostId, deletePost, updatePost } from "../api.ts";
 import AddPost from "./AddPost.tsx";
+import { PencilIcon, TrashIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
 
 interface Post {
   id: number;
@@ -79,23 +80,24 @@ const Posts: React.FC = () => {
             <div className="mt-4 flex justify-between">
               <button
                 onClick={() => handlePostClick(post.id)}
-                className="px-4 py-2 text-sm bg-teal-500 text-white rounded-md hover:bg-teal-400 transition"
+                className="px-4 py-2 text-sm bg-teal-500 text-white rounded-md hover:bg-teal-400 transition flex items-center"
               >
-                View Comments
+                <ChatBubbleLeftIcon className="h-5 w-5 mr-2" /> {/* Chat icon */}
+               
               </button>
 
               <button
                 onClick={() => handleEditPost(post)}
-                className="px-4 py-2 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-400 transition"
+                className="px-4 py-2 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-400 transition flex items-center"
               >
-                Edit
+                <PencilIcon className="h-5 w-5 mr-2" /> {/* Edit icon */}
               </button>
 
               <button
                 onClick={() => handleDeletePost(post.id)}
-                className="px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-400 transition"
+                className="px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-400 transition flex items-center"
               >
-                Delete
+                <TrashIcon className="h-5 w-5 mr-2" /> {/* Trash icon */}
               </button>
             </div>
           </div>
