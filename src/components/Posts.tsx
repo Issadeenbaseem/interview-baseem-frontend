@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { fetchPosts, fetchCommentsByPostId, deletePost, updatePost } from "../api";
+import {
+  fetchPosts,
+  fetchCommentsByPostId,
+  deletePost,
+  updatePost,
+} from "../api";
 import AddPost from "./AddPost";
-import { EyeIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
-import { Dialog } from '@headlessui/react';
+import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Dialog } from "@headlessui/react";
 
 interface Post {
   id: number;
@@ -18,7 +23,9 @@ const Posts: React.FC = () => {
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [dialogAction, setDialogAction] = useState<"delete" | "update" | null>(null);
+  const [dialogAction, setDialogAction] = useState<"delete" | "update" | null>(
+    null
+  );
   const [postToActUpon, setPostToActUpon] = useState<Post | null>(null);
 
   useEffect(() => {
@@ -59,7 +66,9 @@ const Posts: React.FC = () => {
     });
 
     if (result) {
-      setPosts(posts.map((post) => (post.id === updatedPost.id ? result : post)));
+      setPosts(
+        posts.map((post) => (post.id === updatedPost.id ? result : post))
+      );
       setEditingPost(null);
     }
   };
@@ -83,13 +92,17 @@ const Posts: React.FC = () => {
     setIsDialogOpen(false);
   };
 
-  if (loading) return <div className="text-center text-gray-600">Loading posts...</div>;
-
+  if (loading)
+    return <div className="text-center text-gray-600">Loading posts...</div>;
 
   return (
     <div className="max-w-4xl mx-auto">
-      <AddPost onPostAdded={handleNewPost} editingPost={editingPost} onUpdatePost={handleUpdatePost} />
-  
+      <AddPost
+        onPostAdded={handleNewPost}
+        editingPost={editingPost}
+        onUpdatePost={handleUpdatePost}
+      />
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold text-teal-700">Posts</h1>
         <input
@@ -100,51 +113,79 @@ const Posts: React.FC = () => {
           className="px-4 py-2 border rounded-md"
         />
       </div>
-  
+
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {filteredPosts.map((post) => (
           <div
             key={post.id}
             className="bg-white shadow-lg rounded-lg p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
           >
-            <h3 className="text-xl font-semibold text-gray-800">{post.title}</h3>
+            <h3 className="text-xl font-semibold text-gray-800">
+              {post.title}
+            </h3>
             <p className="text-gray-600 mt-2">{post.body}</p>
-  
+
             <div className="mt-4 flex justify-between">
-              <button
+              <div
                 onClick={() => handlePostClick(post.id)}
-                className="px-4 py-2 text-sm bg-teal-500 text-white rounded-md hover:bg-teal-400 transition flex items-center"
+                className="p-2 bg-teal-500 text-white rounded-md transition cursor-pointer"
+                aria-label="View"
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handlePostClick(post.id);
+                  }
+                }}
               >
-                <EyeIcon className="h-5 w-5 mr-1" />
-                View
-              </button>
-  
-              <button
+                <EyeIcon className="h-5 w-5" />
+              </div>
+
+              <div
                 onClick={() => handleEditPost(post)}
-                className="px-4 py-2 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-400 transition flex items-center"
+                className="p-2 bg-yellow-500 text-white rounded-md transition cursor-pointer"
+                aria-label="Edit"
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleEditPost(post);
+                  }
+                }}
               >
-                <PencilIcon className="h-5 w-5 mr-1" />
-                Edit
-              </button>
-  
-              <button
+                <PencilIcon className="h-5 w-5" />
+              </div>
+
+              <div
                 onClick={() => openDialog("delete", post)}
-                className="px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-400 transition flex items-center"
+                className="p-2 bg-red-500 text-white rounded-md transition cursor-pointer"
+                aria-label="Delete"
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    openDialog("delete", post);
+                  }
+                }}
               >
-                <TrashIcon className="h-5 w-5 mr-1" />
-                Delete
-              </button>
+                <TrashIcon className="h-5 w-5" />
+              </div>
             </div>
           </div>
         ))}
       </div>
-  
+
       {selectedPostId && (
         <div className="mt-8">
-          <h2 className="text-2xl font-semibold text-teal-700">Comments for Post {selectedPostId}</h2>
+          <h2 className="text-2xl font-semibold text-teal-700">
+            Comments for Post {selectedPostId}
+          </h2>
           <div className="space-y-4">
             {comments.map((comment) => (
-              <div key={comment.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
+              <div
+                key={comment.id}
+                className="bg-gray-100 p-4 rounded-lg shadow-md"
+              >
                 <h4 className="font-semibold text-gray-800">{comment.name}</h4>
                 <p className="text-gray-600 text-sm">{comment.body}</p>
               </div>
@@ -152,8 +193,12 @@ const Posts: React.FC = () => {
           </div>
         </div>
       )}
-  
-      <Dialog open={isDialogOpen} onClose={() => setIsDialogOpen(false)} className="fixed z-10 inset-0 overflow-y-auto">
+
+      <Dialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        className="fixed z-10 inset-0 overflow-y-auto"
+      >
         <div className="flex items-center justify-center min-h-screen">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
             <Dialog.Title className="text-lg font-bold">
@@ -183,7 +228,6 @@ const Posts: React.FC = () => {
       </Dialog>
     </div>
   );
-  
 };
 
 export default Posts;
