@@ -1,46 +1,53 @@
-// src/api.ts
-const BASE_URL = 'https://jsonplaceholder.typicode.com';
+const API_URL = "https://jsonplaceholder.typicode.com/posts";
 
+// Fetch all posts
 export const fetchPosts = async () => {
-  const response = await fetch(`${BASE_URL}/posts`);
-  return await response.json();
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("Failed to fetch posts");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
 
-export const fetchPostById = async (id: number) => {
-  const response = await fetch(`${BASE_URL}/posts/${id}`);
-  return await response.json();
-};
-
+// Fetch comments for a post
 export const fetchCommentsByPostId = async (postId: number) => {
-  const response = await fetch(`${BASE_URL}/comments?postId=${postId}`);
-  return await response.json();
+  try {
+    const res = await fetch(`${API_URL}/${postId}/comments`);
+    if (!res.ok) throw new Error("Failed to fetch comments");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
 };
 
+// Create a new post
 export const createPost = async (post: { title: string; body: string }) => {
-  const response = await fetch(`${BASE_URL}/posts`, {
-    method: 'POST',
-    body: JSON.stringify(post),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  return await response.json();
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(post),
+    });
+    if (!res.ok) throw new Error("Failed to create post");
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
 };
 
-export const updatePost = async (id: number, post: { title: string; body: string }) => {
-  const response = await fetch(`${BASE_URL}/posts/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify(post),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  return await response.json();
-};
-
+// Delete a post
 export const deletePost = async (id: number) => {
-  const response = await fetch(`${BASE_URL}/posts/${id}`, {
-    method: 'DELETE',
-  });
-  return response.ok;
+  try {
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error("Failed to delete post");
+    return true;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
 };

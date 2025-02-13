@@ -1,6 +1,6 @@
-// src/components/Posts.tsx
-import React, { useEffect, useState } from 'react';
-import { fetchPosts, fetchCommentsByPostId, deletePost } from '../api';
+import React, { useEffect, useState } from "react";
+import { fetchPosts, fetchCommentsByPostId, deletePost } from "../api.ts";
+import AddPost from "./AddPost.tsx";
 
 interface Post {
   id: number;
@@ -37,42 +37,54 @@ const Posts: React.FC = () => {
     }
   };
 
-  if (loading) return <div>Loading posts...</div>;
+  const handleNewPost = (post: Post) => {
+    setPosts([post, ...posts]); // Add new post at the top
+  };
+
+  if (loading) return <div className="text-center text-gray-600">Loading posts...</div>;
 
   return (
-    <div>
-      <h1 className="text-4xl font-semibold text-teal-600 mb-4">Posts</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-4">
+    <div className="max-w-4xl mx-auto">
+      <AddPost onPostAdded={handleNewPost} />
+
+      <h1 className="text-3xl font-bold text-teal-700 mb-6">Posts</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-white p-6 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:scale-105"
+            className="bg-white shadow-lg rounded-lg p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
           >
-            <h3 className="text-xl font-semibold text-teal-600 mb-4">{post.title}</h3>
-            <p className="text-gray-700 text-sm line-clamp-3">{post.body}</p>
-            <button
-              onClick={() => handlePostClick(post.id)}
-              className="mt-4 px-4 py-2 bg-teal-600 text-white rounded-lg transition-all duration-300 hover:bg-teal-500"
-            >
-              View Comments
-            </button>
-            <button
-              onClick={() => handleDeletePost(post.id)}
-              className="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg transition-all duration-300 hover:bg-red-500"
-            >
-              Delete
-            </button>
+            <h3 className="text-xl font-semibold text-gray-800">{post.title}</h3>
+            <p className="text-gray-600 mt-2">{post.body}</p>
+
+            <div className="mt-4 flex justify-between">
+              <button
+                onClick={() => handlePostClick(post.id)}
+                className="px-4 py-2 text-sm bg-teal-500 text-white rounded-md hover:bg-teal-400 transition"
+              >
+                View Comments
+              </button>
+
+              <button
+                onClick={() => handleDeletePost(post.id)}
+                className="px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-400 transition"
+              >
+                Delete
+              </button>
+            </div>
           </div>
         ))}
       </div>
+
       {selectedPostId && (
         <div className="mt-8">
-          <h2 className="text-2xl font-semibold text-teal-600">Comments for Post {selectedPostId}</h2>
+          <h2 className="text-2xl font-semibold text-teal-700">Comments for Post {selectedPostId}</h2>
           <div className="space-y-4">
             {comments.map((comment) => (
-              <div key={comment.id} className="bg-gray-100 p-4 rounded-lg">
-                <h4 className="font-semibold text-teal-600">{comment.name}</h4>
-                <p className="text-gray-700 text-sm">{comment.body}</p>
+              <div key={comment.id} className="bg-gray-100 p-4 rounded-lg shadow-md">
+                <h4 className="font-semibold text-gray-800">{comment.name}</h4>
+                <p className="text-gray-600 text-sm">{comment.body}</p>
               </div>
             ))}
           </div>
