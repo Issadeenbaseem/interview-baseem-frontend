@@ -11,7 +11,7 @@ interface AddPostProps {
   onPostAdded: (post: Post) => void;
   editingPost?: Post | null;
   onUpdatePost?: (post: Post) => void;
-  onCancel?: () => void; // New prop for closing the form
+  onCancel?: () => void;
 }
 
 const AddPost: React.FC<AddPostProps> = ({
@@ -69,15 +69,9 @@ const AddPost: React.FC<AddPostProps> = ({
     setErrors({});
   };
 
-  const handleClose = () => {
-    if (onCancel) {
-      onCancel(); // Call the onCancel function to close the form
-    }
-  };
-
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
-      <h2 className="text-2xl font-semibold text-teal-700 mb-4">
+    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6">
+      <h2 className="text-xl sm:text-2xl font-semibold text-teal-700 mb-4">
         {editingPost ? "Edit Post" : "Add a New Post"}
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -126,24 +120,24 @@ const AddPost: React.FC<AddPostProps> = ({
             </p>
           )}
         </div>
-        <div className="flex space-x-4">
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <button
             type="submit"
-            className="w-full py-2 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-400 transition"
+            className="w-full sm:w-auto py-2 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-400 transition"
           >
             {editingPost ? "Update Post" : "Add Post"}
           </button>
           <button
             type="button"
             onClick={handleClear}
-            className="w-full py-2 bg-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-400 transition"
+            className="w-full sm:w-auto py-2 bg-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-400 transition"
           >
             Clear
           </button>
           <button
             type="button"
-            onClick={handleClose}
-            className="w-full py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400 transition"
+            onClick={onCancel}
+            className="w-full sm:w-auto py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400 transition"
           >
             Close
           </button>

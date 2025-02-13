@@ -116,25 +116,25 @@ const Posts: React.FC = () => {
     return <div className="text-center text-gray-600">Loading posts...</div>;
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-100 min-h-screen">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-teal-700">Posts</h1>
-        <div className="flex space-x-4">
+    <div className="max-w-7xl mx-auto p-4 sm:p-6 bg-gray-100 min-h-screen">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 space-y-4 sm:space-y-0">
+        <h1 className="text-2xl sm:text-3xl font-bold text-teal-700">Posts</h1>
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
           <input
             type="text"
             placeholder="Search posts..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="w-full sm:w-64 px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
           <button
             onClick={() => {
               setEditingPost(null);
               setIsAddPostVisible(true);
             }}
-            className="px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition"
+            className="w-full sm:w-auto px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition flex items-center justify-center"
           >
-            <PlusIcon className="h-5 w-5 inline-block" /> Create New Post
+            <PlusIcon className="h-5 w-5 inline-block mr-2" /> Create New Post
           </button>
         </div>
       </div>
@@ -152,7 +152,7 @@ const Posts: React.FC = () => {
         <ul className="divide-y divide-gray-200">
           {currentPosts.map((post) => (
             <li key={post.id} className="px-4 py-5 sm:px-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
                 <div>
                   <h3 className="text-lg leading-6 font-medium text-gray-900">
                     {post.title}
@@ -190,63 +190,63 @@ const Posts: React.FC = () => {
         </ul>
       </div>
 
-  {/* Pagination Controls */}
-<div className="flex justify-center items-center mt-6 space-x-2">
-  {/* Previous Button */}
-  {currentPage > 1 && (
-    <button
-      onClick={() => {
-        setCurrentPage(currentPage - 1);
-        if ((currentPage - 1) % 5 === 0) {
-          setCurrentPage(currentPage - 5); // Shift the window backward
-        }
-      }}
-      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
-    >
-      Previous
-    </button>
-  )}
+      {/* Pagination Controls */}
+      <div className="flex justify-center items-center mt-6 space-x-2">
+        {/* Previous Button */}
+        {currentPage > 1 && (
+          <button
+            onClick={() => {
+              setCurrentPage(currentPage - 1);
+              if ((currentPage - 1) % 5 === 0) {
+                setCurrentPage(currentPage - 5); // Shift the window backward
+              }
+            }}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+          >
+            Previous
+          </button>
+        )}
 
-  {/* Show only 5 page numbers at a time */}
-  {Array.from({ length: Math.ceil(filteredPosts.length / postsPerPage) })
-    .slice(
-      Math.floor((currentPage - 1) / 5) * 5,
-      Math.floor((currentPage - 1) / 5) * 5 + 5
-    )
-    .map((_, index) => {
-      const pageNumber = Math.floor((currentPage - 1) / 5) * 5 + index + 1;
-      if (pageNumber > Math.ceil(filteredPosts.length / postsPerPage)) return null;
+        {/* Show only 5 page numbers at a time */}
+        {Array.from({ length: Math.ceil(filteredPosts.length / postsPerPage) })
+          .slice(
+            Math.floor((currentPage - 1) / 5) * 5,
+            Math.floor((currentPage - 1) / 5) * 5 + 5
+          )
+          .map((_, index) => {
+            const pageNumber = Math.floor((currentPage - 1) / 5) * 5 + index + 1;
+            if (pageNumber > Math.ceil(filteredPosts.length / postsPerPage)) return null;
 
-      return (
-        <button
-          key={pageNumber}
-          onClick={() => paginate(pageNumber)}
-          className={`px-4 py-2 rounded-md ${
-            currentPage === pageNumber
-              ? "bg-teal-500 text-white"
-              : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-          }`}
-        >
-          {pageNumber}
-        </button>
-      );
-    })}
+            return (
+              <button
+                key={pageNumber}
+                onClick={() => paginate(pageNumber)}
+                className={`px-4 py-2 rounded-md ${
+                  currentPage === pageNumber
+                    ? "bg-teal-500 text-white"
+                    : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                }`}
+              >
+                {pageNumber}
+              </button>
+            );
+          })}
 
-  {/* Next Button */}
-  {currentPage + 4 < Math.ceil(filteredPosts.length / postsPerPage) && (
-    <button
-      onClick={() => {
-        setCurrentPage(currentPage + 1);
-        if (currentPage % 5 === 0) {
-          setCurrentPage(currentPage + 1); // Shift the window forward
-        }
-      }}
-      className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
-    >
-      Next
-    </button>
-  )}
-</div>
+        {/* Next Button */}
+        {currentPage + 4 < Math.ceil(filteredPosts.length / postsPerPage) && (
+          <button
+            onClick={() => {
+              setCurrentPage(currentPage + 1);
+              if (currentPage % 5 === 0) {
+                setCurrentPage(currentPage + 1); // Shift the window forward
+              }
+            }}
+            className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+          >
+            Next
+          </button>
+        )}
+      </div>
 
       {/* Comments Section */}
       {selectedPostId && (
