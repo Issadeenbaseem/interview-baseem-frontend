@@ -8,6 +8,7 @@ import {
 import AddPost from "./AddPost";
 import { EyeIcon, PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
+import { Tooltip } from "react-tooltip";
 
 interface Post {
   id: number;
@@ -133,9 +134,12 @@ const Posts: React.FC = () => {
               setIsAddPostVisible(true);
             }}
             className="w-full sm:w-auto px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600 transition flex items-center justify-center"
+            data-tooltip-id="add-post-tooltip"
+            data-tooltip-content="Create New Post"
           >
-            <PlusIcon className="h-5 w-5 inline-block mr-2" /> Create New Post
+            <PlusIcon className="h-5 w-5" />
           </button>
+          <Tooltip id="add-post-tooltip" />
         </div>
       </div>
 
@@ -165,24 +169,30 @@ const Posts: React.FC = () => {
                   <button
                     onClick={() => handlePostClick(post.id)}
                     className="text-teal-600 hover:text-teal-900"
-                    aria-label="View"
+                    data-tooltip-id="view-tooltip"
+                    data-tooltip-content="View Comments"
                   >
                     <EyeIcon className="h-6 w-6" />
                   </button>
                   <button
                     onClick={() => handleEditPost(post)}
                     className="text-yellow-600 hover:text-yellow-900"
-                    aria-label="Edit"
+                    data-tooltip-id="edit-tooltip"
+                    data-tooltip-content="Edit Post"
                   >
                     <PencilIcon className="h-6 w-6" />
                   </button>
                   <button
                     onClick={() => openDialog("delete", post)}
                     className="text-red-600 hover:text-red-900"
-                    aria-label="Delete"
+                    data-tooltip-id="delete-tooltip"
+                    data-tooltip-content="Delete Post"
                   >
                     <TrashIcon className="h-6 w-6" />
                   </button>
+                  <Tooltip id="view-tooltip" />
+                  <Tooltip id="edit-tooltip" />
+                  <Tooltip id="delete-tooltip" />
                 </div>
               </div>
             </li>
@@ -202,8 +212,10 @@ const Posts: React.FC = () => {
               }
             }}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+            data-tooltip-id="prev-tooltip"
+            data-tooltip-content="Previous"
           >
-            Previous
+            &lt;
           </button>
         )}
 
@@ -226,6 +238,8 @@ const Posts: React.FC = () => {
                     ? "bg-teal-500 text-white"
                     : "bg-gray-300 text-gray-700 hover:bg-gray-400"
                 }`}
+                data-tooltip-id={`page-${pageNumber}-tooltip`}
+                data-tooltip-content={`Page ${pageNumber}`}
               >
                 {pageNumber}
               </button>
@@ -242,10 +256,14 @@ const Posts: React.FC = () => {
               }
             }}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+            data-tooltip-id="next-tooltip"
+            data-tooltip-content="Next"
           >
-            Next
+            &gt;
           </button>
         )}
+        <Tooltip id="prev-tooltip" />
+        <Tooltip id="next-tooltip" />
       </div>
 
       {/* Comments Section */}

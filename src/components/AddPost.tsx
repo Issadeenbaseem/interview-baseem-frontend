@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createPost } from "../api.ts";
+import { PlusIcon, XMarkIcon, ArrowPathIcon } from "@heroicons/react/24/outline";
+import { Tooltip } from "react-tooltip";
 
 interface Post {
   id: number;
@@ -70,13 +72,13 @@ const AddPost: React.FC<AddPostProps> = ({
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-4 sm:p-6 mb-6">
-      <h2 className="text-xl sm:text-2xl font-semibold text-teal-700 mb-4">
+    <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
+      <h2 className="text-2xl font-semibold text-teal-700 mb-6">
         {editingPost ? "Edit Post" : "Add a New Post"}
       </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
             Title
           </label>
           <input
@@ -86,7 +88,7 @@ const AddPost: React.FC<AddPostProps> = ({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400 ${
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 ${
               errors.title ? "border-red-500" : "border-gray-300"
             }`}
             aria-invalid={errors.title ? "true" : "false"}
@@ -99,7 +101,7 @@ const AddPost: React.FC<AddPostProps> = ({
           )}
         </div>
         <div>
-          <label htmlFor="body" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="body" className="block text-sm font-medium text-gray-700 mb-2">
             Body
           </label>
           <textarea
@@ -108,7 +110,7 @@ const AddPost: React.FC<AddPostProps> = ({
             value={body}
             onChange={(e) => setBody(e.target.value)}
             required
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-teal-400 ${
+            className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 ${
               errors.body ? "border-red-500" : "border-gray-300"
             }`}
             aria-invalid={errors.body ? "true" : "false"}
@@ -123,24 +125,42 @@ const AddPost: React.FC<AddPostProps> = ({
         <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
           <button
             type="submit"
-            className="w-full sm:w-auto py-2 bg-teal-500 text-white font-semibold rounded-md hover:bg-teal-400 transition"
+            className="w-full sm:w-auto py-2 px-4 bg-teal-500 text-white font-semibold rounded-lg hover:bg-teal-600 transition flex items-center justify-center"
+            data-tooltip-id="submit-tooltip"
+            data-tooltip-content={editingPost ? "Update Post" : "Add Post"}
           >
-            {editingPost ? "Update Post" : "Add Post"}
+            {editingPost ? (
+              <ArrowPathIcon className="h-5 w-5 mr-2" />
+            ) : (
+              <PlusIcon className="h-5 w-5 mr-2" />
+            )}
+            {editingPost ? "Update" : "Add"}
           </button>
+          <Tooltip id="submit-tooltip" />
+
           <button
             type="button"
             onClick={handleClear}
-            className="w-full sm:w-auto py-2 bg-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-400 transition"
+            className="w-full sm:w-auto py-2 px-4 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 transition flex items-center justify-center"
+            data-tooltip-id="clear-tooltip"
+            data-tooltip-content="Clear Form"
           >
+            <XMarkIcon className="h-5 w-5 mr-2" />
             Clear
           </button>
+          <Tooltip id="clear-tooltip" />
+
           <button
             type="button"
             onClick={onCancel}
-            className="w-full sm:w-auto py-2 bg-red-500 text-white font-semibold rounded-md hover:bg-red-400 transition"
+            className="w-full sm:w-auto py-2 px-4 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition flex items-center justify-center"
+            data-tooltip-id="close-tooltip"
+            data-tooltip-content="Close Form"
           >
+            <XMarkIcon className="h-5 w-5 mr-2" />
             Close
           </button>
+          <Tooltip id="close-tooltip" />
         </div>
       </form>
     </div>
