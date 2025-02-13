@@ -51,3 +51,22 @@ export const deletePost = async (id: number) => {
     return false;
   }
 };
+
+// Update an existing post
+export const updatePost = async (id: number, updatedPost: { title: string; body: string }) => {
+    try {
+      const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedPost),
+      });
+  
+      if (!res.ok) throw new Error("Failed to update post");
+  
+      return await res.json();
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  };
+  

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchPosts, fetchCommentsByPostId, deletePost } from "../api.ts";
+import { fetchPosts, fetchCommentsByPostId, deletePost, updatePost } from "../api.ts";
 import AddPost from "./AddPost.tsx";
 
 interface Post {
@@ -13,6 +13,7 @@ const Posts: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
   const [comments, setComments] = useState<any[]>([]);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -41,11 +42,28 @@ const Posts: React.FC = () => {
     setPosts([post, ...posts]); // Add new post at the top
   };
 
+  const handleEditPost = (post: Post) => {
+    setEditingPost(post);
+  };
+
+  const handleUpdatePost = async (updatedPost: Post) => {
+    const result = await updatePost(updatedPost.id, {
+      title: updatedPost.title,
+      body: updatedPost.body,
+    });
+
+    if (result) {
+      setPosts(posts.map((post) => (post.id === updatedPost.id ? result : post)));
+      setEditingPost(null);
+    }
+  };
+
   if (loading) return <div className="text-center text-gray-600">Loading posts...</div>;
 
   return (
     <div className="max-w-4xl mx-auto">
-      <AddPost onPostAdded={handleNewPost} />
+      {/* AddPost will handle both adding and editing */}
+      <AddPost onPostAdded={handleNewPost} editingPost={editingPost} onUpdatePost={handleUpdatePost} />
 
       <h1 className="text-3xl font-bold text-teal-700 mb-6">Posts</h1>
 
@@ -64,6 +82,13 @@ const Posts: React.FC = () => {
                 className="px-4 py-2 text-sm bg-teal-500 text-white rounded-md hover:bg-teal-400 transition"
               >
                 View Comments
+              </button>
+
+              <button
+                onClick={() => handleEditPost(post)}
+                className="px-4 py-2 text-sm bg-yellow-500 text-white rounded-md hover:bg-yellow-400 transition"
+              >
+                Edit
               </button>
 
               <button
