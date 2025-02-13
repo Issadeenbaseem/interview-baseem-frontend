@@ -9,16 +9,24 @@ import AddPost from "./AddPost";
 import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
 
-const Posts = () => {
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedPostId, setSelectedPostId] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [editingPost, setEditingPost] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [dialogAction, setDialogAction] = useState(null);
-  const [postToActUpon, setPostToActUpon] = useState(null);
+interface Post {
+  id: number;
+  title: string;
+  body: string;
+}
+
+const Posts: React.FC = () => {
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [dialogAction, setDialogAction] = useState<"delete" | "update" | null>(
+    null
+  );
+  const [postToActUpon, setPostToActUpon] = useState<Post | null>(null);
 
   useEffect(() => {
     const loadPosts = async () => {
@@ -30,28 +38,28 @@ const Posts = () => {
     loadPosts();
   }, []);
 
-  const handlePostClick = async (id) => {
+  const handlePostClick = async (id: number) => {
     setSelectedPostId(id);
     const data = await fetchCommentsByPostId(id);
     setComments(data);
   };
 
-  const handleDeletePost = async (id) => {
+  const handleDeletePost = async (id: number) => {
     const success = await deletePost(id);
     if (success) {
       setPosts(posts.filter((post) => post.id !== id));
     }
   };
 
-  const handleNewPost = (post) => {
+  const handleNewPost = (post: Post) => {
     setPosts([post, ...posts]);
   };
 
-  const handleEditPost = (post) => {
+  const handleEditPost = (post: Post) => {
     setEditingPost(post);
   };
 
-  const handleUpdatePost = async (updatedPost) => {
+  const handleUpdatePost = async (updatedPost: Post) => {
     const result = await updatePost(updatedPost.id, {
       title: updatedPost.title,
       body: updatedPost.body,
@@ -69,7 +77,7 @@ const Posts = () => {
     post.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const openDialog = (action, post) => {
+  const openDialog = (action: "delete" | "update", post: Post) => {
     setDialogAction(action);
     setPostToActUpon(post);
     setIsDialogOpen(true);
@@ -87,171 +95,139 @@ const Posts = () => {
   if (loading)
     return <div className="text-center text-gray-600">Loading posts...</div>;
 
-    return (
-      <div className="flex h-screen">
-        {/* Sidebar */}
-        <div className="w-1/4 bg-gray-800 text-white p-4">
-          <h2 className="text-2xl font-bold mb-6">Admin Panel</h2>
-          <ul>
-            <li className="mb-4">
-              <a href="#" className="hover:text-teal-400">
-                Dashboard
-              </a>
-            </li>
-            <li className="mb-4">
-              <a href="#" className="hover:text-teal-400">
-                Posts
-              </a>
-            </li>
-            <li className="mb-4">
-              <a href="#" className="hover:text-teal-400">
-                Comments
-              </a>
-            </li>
-            <li className="mb-4">
-              <a href="#" className="hover:text-teal-400">
-                Users
-              </a>
-            </li>
-          </ul>
-        </div>
-    
-        {/* Main Content */}
-        <div className="w-3/4 p-6 bg-gray-100 overflow-y-auto">
-          <AddPost
-            onPostAdded={handleNewPost}
-            editingPost={editingPost}
-            onUpdatePost={handleUpdatePost}
-          />
-    
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-teal-700">Posts</h1>
-            <input
-              type="text"
-              placeholder="Search posts..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="px-4 py-2 border rounded-md"
-            />
-          </div>
-    
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {filteredPosts.map((post) => (
+  return (
+    <div className="max-w-4xl mx-auto">
+      <AddPost
+        onPostAdded={handleNewPost}
+        editingPost={editingPost}
+        onUpdatePost={handleUpdatePost}
+      />
+
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-teal-700">Posts</h1>
+        <input
+          type="text"
+          placeholder="Search posts..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="px-4 py-2 border rounded-md"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {filteredPosts.map((post) => (
+          <div
+            key={post.id}
+            className="bg-white shadow-lg rounded-lg p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+          >
+            <h3 className="text-xl font-semibold text-gray-800">
+              {post.title}
+            </h3>
+            <p className="text-gray-600 mt-2">{post.body}</p>
+
+            <div className="mt-4 flex justify-between">
               <div
-                key={post.id}
-                className="bg-white shadow-lg rounded-lg p-6 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1"
+                onClick={() => handlePostClick(post.id)}
+                className="p-2 bg-teal-500 text-white rounded-md transition cursor-pointer"
+                aria-label="View"
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handlePostClick(post.id);
+                  }
+                }}
               >
-                <h3 className="text-xl font-semibold text-gray-800">
-                  {post.title}
-                </h3>
-                <p className="text-gray-600 mt-2">{post.body}</p>
-    
-                <div className="mt-4 flex justify-between">
-                  <div
-                    onClick={() => handlePostClick(post.id)}
-                    className="p-2 bg-teal-500 text-white rounded-md transition cursor-pointer"
-                    aria-label="View"
-                    role="button"
-                    tabIndex={0}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        handlePostClick(post.id);
-                      }
-                    }}
-                  >
-                    <EyeIcon className="h-5 w-5" />
-                  </div>
-    
-                  <div
-                    onClick={() => handleEditPost(post)}
-                    className="p-2 bg-yellow-500 text-white rounded-md transition cursor-pointer"
-                    aria-label="Edit"
-                    role="button"
-                    tabIndex={0}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        handleEditPost(post);
-                      }
-                    }}
-                  >
-                    <PencilIcon className="h-5 w-5" />
-                  </div>
-    
-                  <div
-                    onClick={() => openDialog("delete", post)}
-                    className="p-2 bg-red-500 text-white rounded-md transition cursor-pointer"
-                    aria-label="Delete"
-                    role="button"
-                    tabIndex={0}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter" || e.key === " ") {
-                        openDialog("delete", post);
-                      }
-                    }}
-                  >
-                    <TrashIcon className="h-5 w-5" />
-                  </div>
-                </div>
+                <EyeIcon className="h-5 w-5" />
+              </div>
+
+              <div
+                onClick={() => handleEditPost(post)}
+                className="p-2 bg-yellow-500 text-white rounded-md transition cursor-pointer"
+                aria-label="Edit"
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    handleEditPost(post);
+                  }
+                }}
+              >
+                <PencilIcon className="h-5 w-5" />
+              </div>
+
+              <div
+                onClick={() => openDialog("delete", post)}
+                className="p-2 bg-red-500 text-white rounded-md transition cursor-pointer"
+                aria-label="Delete"
+                role="button"
+                tabIndex={0}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    openDialog("delete", post);
+                  }
+                }}
+              >
+                <TrashIcon className="h-5 w-5" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {selectedPostId && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold text-teal-700">
+            Comments for Post {selectedPostId}
+          </h2>
+          <div className="space-y-4">
+            {comments.map((comment) => (
+              <div
+                key={comment.id}
+                className="bg-gray-100 p-4 rounded-lg shadow-md"
+              >
+                <h4 className="font-semibold text-gray-800">{comment.name}</h4>
+                <p className="text-gray-600 text-sm">{comment.body}</p>
               </div>
             ))}
           </div>
-    
-          {selectedPostId && (
-            <div className="mt-8">
-              <h2 className="text-2xl font-semibold text-teal-700">
-                Comments for Post {selectedPostId}
-              </h2>
-              <div className="space-y-4">
-                {comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="bg-gray-100 p-4 rounded-lg shadow-md"
-                  >
-                    <h4 className="font-semibold text-gray-800">{comment.name}</h4>
-                    <p className="text-gray-600 text-sm">{comment.body}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-    
-          <Dialog
-            open={isDialogOpen}
-            onClose={() => setIsDialogOpen(false)}
-            className="fixed z-10 inset-0 overflow-y-auto"
-          >
-            <div className="flex items-center justify-center min-h-screen">
-              <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
-                <Dialog.Title className="text-lg font-bold">
-                  {dialogAction === "delete" ? "Confirm Delete" : "Confirm Update"}
-                </Dialog.Title>
-                <Dialog.Description className="mt-2">
-                  {dialogAction === "delete"
-                    ? "Are you sure you want to delete this post? This action cannot be undone."
-                    : "Are you sure you want to update this post?"}
-                </Dialog.Description>
-                <div className="mt-4 flex justify-end space-x-2">
-                  <button
-                    onClick={() => setIsDialogOpen(false)}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={confirmAction}
-                    className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-400 transition"
-                  >
-                    Confirm
-                  </button>
-                </div>
-              </div>
-            </div>
-          </Dialog>
         </div>
-      </div>
-    );
-    
-    
+      )}
+
+      <Dialog
+        open={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        className="fixed z-10 inset-0 overflow-y-auto"
+      >
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm mx-auto">
+            <Dialog.Title className="text-lg font-bold">
+              {dialogAction === "delete" ? "Confirm Delete" : "Confirm Update"}
+            </Dialog.Title>
+            <Dialog.Description className="mt-2">
+              {dialogAction === "delete"
+                ? "Are you sure you want to delete this post? This action cannot be undone."
+                : "Are you sure you want to update this post?"}
+            </Dialog.Description>
+            <div className="mt-4 flex justify-end space-x-2">
+              <button
+                onClick={() => setIsDialogOpen(false)}
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmAction}
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-400 transition"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+      </Dialog>
+    </div>
+  );
 };
 
 export default Posts;
