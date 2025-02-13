@@ -1,6 +1,20 @@
-# Project Name
+# Front end Interview  
 
 A brief description of your project. This project is built using React, TypeScript, and Vite.
+
+## Table of Contents
+
+- [Features](#features)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Application](#running-the-application)
+  - [Building for Production](#building-for-production)
+  - [Testing](#testing)
+- [Project Structure](#project-structure)
+- [Available Scripts](#available-scripts)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
@@ -20,6 +34,7 @@ Follow these instructions to get the project up and running on your local machin
 
 ### Installation
 
-1. Clone the repository:
+1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/Issadeenbaseem/interview-baseem-frontend.git
