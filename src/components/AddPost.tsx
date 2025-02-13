@@ -72,7 +72,18 @@ const AddPost: React.FC<AddPostProps> = ({
   };
 
   return (
-    <div className="bg-white shadow-lg rounded-lg p-6 mb-6">
+    <div className="bg-white shadow-lg rounded-lg p-6 mb-6 relative">
+      {/* Close Button (Top-Right Corner) */}
+      <button
+        onClick={onCancel}
+        className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 transition"
+        data-tooltip-id="close-tooltip"
+        data-tooltip-content="Close Form"
+      >
+        <XMarkIcon className="h-6 w-6" />
+      </button>
+      <Tooltip id="close-tooltip" />
+
       <h2 className="text-2xl font-semibold text-teal-700 mb-6">
         {editingPost ? "Edit Post" : "Add a New Post"}
       </h2>
@@ -149,18 +160,6 @@ const AddPost: React.FC<AddPostProps> = ({
             Clear
           </button>
           <Tooltip id="clear-tooltip" />
-
-          <button
-            type="button"
-            onClick={onCancel}
-            className="w-full sm:w-auto py-2 px-4 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition flex items-center justify-center"
-            data-tooltip-id="close-tooltip"
-            data-tooltip-content="Close Form"
-          >
-            <XMarkIcon className="h-5 w-5 mr-2" />
-            Close
-          </button>
-          <Tooltip id="close-tooltip" />
         </div>
       </form>
     </div>
