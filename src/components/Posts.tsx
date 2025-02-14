@@ -6,7 +6,7 @@ import {
   updatePost,
 } from "../api";
 import AddPost from "./AddPost";
-import { EyeIcon, PencilIcon, TrashIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { EyeIcon, PencilIcon, TrashIcon, PlusIcon, ChevronUpDownIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
 import { Tooltip } from "react-tooltip";
 
@@ -27,6 +27,9 @@ const Posts: React.FC = () => {
   const [dialogAction, setDialogAction] = useState<"delete" | "update" | null>(null);
   const [postToActUpon, setPostToActUpon] = useState<Post | null>(null);
   const [isAddPostVisible, setIsAddPostVisible] = useState<boolean>(false);
+
+  // Sorting state
+  const [sortBy, setSortBy] = useState<"id" | "title">("id"); // Default sort by ID
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -83,10 +86,19 @@ const Posts: React.FC = () => {
     }
   };
 
-  // Filter posts based on search query
-  const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort posts
+  const filteredPosts = posts
+    .filter((post) =>
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.body.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "title") {
+        return a.title.localeCompare(b.title); // Sort by title
+      } else {
+        return a.id - b.id; // Sort by ID
+      }
+    });
 
   // Pagination logic
   const indexOfLastPost = currentPage * postsPerPage;
@@ -128,6 +140,17 @@ const Posts: React.FC = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full sm:w-64 px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
           />
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as "id" | "title")}
+              className="w-full sm:w-48 px-4 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 appearance-none"
+            >
+              <option value="id">Sort by ID</option>
+              <option value="title">Sort by Title</option>
+            </select>
+            <ChevronUpDownIcon className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none" />
+          </div>
           <button
             onClick={() => {
               setEditingPost(null);
@@ -137,7 +160,8 @@ const Posts: React.FC = () => {
             data-tooltip-id="add-post-tooltip"
             data-tooltip-content="Create New Post"
           >
-            <PlusIcon className="h-5 w-5" />
+            <PlusIcon className="h-5 w-5 mr-2" />
+            Add Post
           </button>
           <Tooltip id="add-post-tooltip" />
         </div>
@@ -205,12 +229,7 @@ const Posts: React.FC = () => {
         {/* Previous Button */}
         {currentPage > 1 && (
           <button
-            onClick={() => {
-              setCurrentPage(currentPage - 1);
-              if ((currentPage - 1) % 5 === 0) {
-                setCurrentPage(currentPage - 5); // Shift the window backward
-              }
-            }}
+            onClick={() => setCurrentPage(currentPage - 1)}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
             data-tooltip-id="prev-tooltip"
             data-tooltip-content="Previous"
@@ -249,12 +268,7 @@ const Posts: React.FC = () => {
         {/* Next Button */}
         {currentPage + 4 < Math.ceil(filteredPosts.length / postsPerPage) && (
           <button
-            onClick={() => {
-              setCurrentPage(currentPage + 1);
-              if (currentPage % 5 === 0) {
-                setCurrentPage(currentPage + 1); // Shift the window forward
-              }
-            }}
+            onClick={() => setCurrentPage(currentPage + 1)}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
             data-tooltip-id="next-tooltip"
             data-tooltip-content="Next"
